@@ -1,0 +1,48 @@
+﻿@page "/ejercicio1"
+<h3>Listado de los empleados, nombre, apellido y teléfono.</h3>
+<div class="form-inline">
+    <label class="sr-only" for="nombre-filtro">Filtrar</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" @bind="NombreFiltro" placeholder="Escribe un nombre" />
+    <button type="button" class="btn btn-primary mr-sm-2 mb-2" @onclick="Filtrar">Filtrar</button>
+    <button type="button" class="btn btn-danger mb-2" @onclick="Limpiar">Limpiar</button>
+</div>
+<table class="table table-striped" id="adminTable2">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Teléfono</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in employees) {
+            <tr>
+                <td>@employee.FirstName</td>
+                <td>@employee.LastName</td>
+                <td>@employee.BusinessPhone</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    List<Employees> GetEmployees() => nwContext.Employees.ToList();
+
+    string NombreFiltro = string.Empty;
+    List<Employees> employees;
+    private void Filtrar() {
+        if (!String.IsNullOrEmpty(NombreFiltro)) {
+            employees = nwContext.Employees.Where(x => x.FirstName == NombreFiltro).ToList();
+        }
+        NombreFiltro = string.Empty;
+    }
+
+    private void Limpiar() {
+        employees = GetEmployees();
+    }
+
+    protected override void OnInitialized() {
+        employees = GetEmployees();
+    }
+}

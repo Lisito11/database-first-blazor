@@ -1,0 +1,49 @@
+﻿@page "/ejercicio2"
+
+<h3>Los 5 productos mas caros.</h3>
+<div class="form-inline">
+    <label class="sr-only" for="nombre-filtro">Filtrar</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" @bind="NombreFiltro" placeholder="Escribe un nombre" />
+    <button type="button" class="btn btn-primary mr-sm-2 mb-2" @onclick="Filtrar">Filtrar</button>
+    <button type="button" class="btn btn-danger mb-2" @onclick="Limpiar">Limpiar</button>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Codigo del producto</th>
+            <th>Nombre del producto</th>
+            <th>Precio del pruducto</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in products) {
+            <tr>
+                <td>@product.ProductCode</td>
+                <td>@product.ProductName</td>
+                <td>RD$@Math.Round(product.ListPrice)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    List<Products> GetProducts() => nwContext.Products.OrderByDescending(x => x.ListPrice).Take(5).ToList();
+
+    string NombreFiltro = string.Empty;
+    List<Products> products;
+    private void Filtrar() {
+        if (!String.IsNullOrEmpty(NombreFiltro)) {
+            products = nwContext.Products.Where(x => x.ProductName == NombreFiltro).ToList(); 
+        }
+        NombreFiltro = string.Empty;
+    }
+
+    private void Limpiar() {
+        products = GetProducts();
+    }
+
+    protected override void OnInitialized() {
+        products = GetProducts();
+    }
+}
